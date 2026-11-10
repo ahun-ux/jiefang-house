@@ -32,8 +32,8 @@ button,input,textarea{font:inherit;color:inherit}
 .brand span{font-size:13px;color:var(--deep);opacity:.8;font-weight:700}
 .hud{position:fixed;left:16px;bottom:16px;display:flex;gap:8px}
 .icon{width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 10px rgba(20,60,70,.18);font-size:18px;font-weight:900;cursor:pointer;color:var(--deep)}
-.teacher-btn{position:fixed;right:16px;bottom:16px;border:none;background:rgba(255,255,255,.95);border-radius:999px;padding:8px 16px;font-weight:700;box-shadow:0 2px 10px rgba(20,60,70,.18);cursor:pointer;color:var(--deep)}
-.teacher-btn:hover{background:#fff}
+.teacher-btn{position:fixed;right:16px;top:16px;z-index:8;border:2px solid #fff;background:var(--deep);color:#fff;border-radius:999px;padding:9px 18px;font-weight:900;font-size:15px;box-shadow:0 4px 14px rgba(20,60,70,.35);cursor:pointer}
+.teacher-btn:hover{background:#163f4a}
 /* login */
 .gate{position:fixed;left:50%;bottom:7%;transform:translateX(-50%);width:min(400px,calc(100% - 32px));background:rgba(255,255,255,.96);border-radius:26px;padding:26px 26px 22px;box-shadow:0 18px 50px rgba(20,60,70,.25);text-align:center}
 .gate h2{font-family:var(--display);font-size:28px;margin:0 0 4px;color:var(--deep);text-wrap:balance}
@@ -163,7 +163,7 @@ label.f textarea{min-height:120px;line-height:1.6}
 @media (max-width:760px){
   .brand h1{font-size:26px}
   .panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:64%;border-radius:22px}
-  .gate{bottom:5%}
+  .gate{bottom:72px}
   .adm{grid-template-columns:1fr;grid-template-rows:200px 1fr}
   .adm-side{border-right:none;border-bottom:1px solid var(--line)}
   .admin{padding:6px}
@@ -206,7 +206,7 @@ label.f textarea{min-height:120px;line-height:1.6}
 </aside>
 
 <div class="hud"><button class="icon" id="zin" aria-label="拉近">＋</button><button class="icon" id="zout" aria-label="拉遠">－</button></div>
-<button class="teacher-btn" id="teacherBtn">老師</button>
+<button class="teacher-btn" id="teacherBtn">老師後台</button>
 <div class="admin" id="pwBox" hidden><form class="gate pwgate" id="pwForm"><h2>老師登入</h2><p>輸入在 Netlify 設定的老師密碼</p><div class="pwrow"><label for="pwIn" hidden>老師密碼</label><input id="pwIn" type="password" placeholder="老師密碼" autocomplete="current-password"><button class="go">進入</button></div><div class="msg" id="pwMsg" role="status"></div><button type="button" class="btn" id="pwCancel">取消</button></form></div>
 
 <div class="admin" id="admin" hidden>
@@ -605,14 +605,14 @@ async function api(route,body){
 function login(id,remember=true){
   current=id;tab="home";
   if(remember){try{localStorage.setItem("jfd_island_name",STUDENTS[id].name)}catch(e){}}
-  $("gate").hidden=true;$("panel").hidden=false;
+  $("gate").hidden=true;$("panel").hidden=false;$("teacherBtn").hidden=true;
   placeMyHouse(id);renderPanel();applyOffset();focusPlot();
   setTimeout(()=>{celebrate();confetti()},700);
 }
 function logout(){
   const wasPreview=previewing;previewing=false;current=null;STUDENTS={};
   if(!wasPreview){try{localStorage.removeItem("jfd_island_name")}catch(e){}}
-  $("panel").hidden=true;$("gate").hidden=false;removeMyHouse();applyOffset();landingView();
+  $("panel").hidden=true;$("gate").hidden=false;$("teacherBtn").hidden=false;removeMyHouse();applyOffset();landingView();
   $("nameIn").value="";$("loginMsg").textContent="";
 }
 $("leaveBtn").onclick=logout;
@@ -794,6 +794,8 @@ $("delStu").onclick=async()=>{
 $("preview").onclick=()=>{if(edDirty){toast("先儲存，再預覽");return}const id=edId;$("admin").hidden=true;if(current)removeMyHouse();previewing=true;STUDENTS={[id]:ALL[id]};login(id,false);toast("預覽中：按「離開島屋」結束")};
 
 initScene();landingView();applyCfg();initData();
+// 備用入口：網址最後加上 #teacher 會直接打開老師登入
+if(location.hash==="#teacher")setTimeout(()=>$("teacherBtn").click(),300);
 </script>
 </body>
 </html>
